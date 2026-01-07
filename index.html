@@ -91,7 +91,7 @@
             font-size: 1.15rem; 
             line-height: 1.7; 
             margin-bottom: 40px; 
-            max-width: 600px; 
+            max-width: 650px; 
             text-align: center; 
             font-weight: 300;
         }
@@ -283,7 +283,6 @@
         .crosshair::before { top: 19px; left: 0; width: 40px; height: 2px; }
         .crosshair::after { top: 0; left: 19px; width: 2px; height: 40px; }
         
-        /* Updated countdown size to ensure consistency */
         .countdown-overlay {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             font-size: 12rem; color: #fff; font-weight: 700; 
@@ -334,8 +333,6 @@
 <div class="container" id="mainContainer">
     
     <div id="step-welcome" class="step active">
-        <div style="font-weight: 700; font-size: 1.5rem; margin-bottom: 10px; color: var(--ink);">››› Huru</div>
-        
         <h1>Head Sizing Tool</h1>
         <p>This application measures your <b>Head Breadth</b> & <b>Height</b> using your webcam to categorize your perfect fit.</p>
         <button class="btn" onclick="nextStep('step-calib')">Let's get started <span>&rarr;</span></button>
@@ -377,9 +374,10 @@
             <div class="top-palm"></div>
             <div class="arrow-line-vert"></div>
         </div>
-        <p>1. Place one finger on your <b>Tragus</b>.<br>
-           2. Press your <b>Flat Palm</b> firmly on the <b>Top of your Head</b>.<br>
-           3. Center the <b>Bubble Level</b>.</p>
+        <p>1. Use the <b>Bubble Level</b> to balance your head.<br>
+           2. Place one of your <b>Index fingers</b> on either <b>tragus</b> (ear bumps).<br>
+           3. Press your <b>Flat Palm</b> firmly on the <b>Top of your Head</b> with the other hand.<br>
+           4. Look straight at the camera (not screen).</p>
         <button class="btn" onclick="startMeasurement('height')">Start Height Measure</button>
     </div>
 
