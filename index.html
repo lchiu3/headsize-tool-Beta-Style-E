@@ -679,10 +679,35 @@
             }
             else if (currentPhase === 1) {
                 if (results.leftHandLandmarks && results.rightHandLandmarks && isFaceAligned) {
-                    const l = results.leftHandLandmarks[8];
-                    const r = results.rightHandLandmarks[8];
-                    drawDot(canvasCtx, l.x*w, l.y*h, "#ef4444");
-                    drawDot(canvasCtx, r.x*w, r.y*h, "#ef4444");
+                    
+                    if (mode === 'breadth') {
+                        // Just dots on index fingers
+                        const l = results.leftHandLandmarks[8];
+                        const r = results.rightHandLandmarks[8];
+                        drawDot(canvasCtx, l.x*w, l.y*h, "#ef4444");
+                        drawDot(canvasCtx, r.x*w, r.y*h, "#ef4444");
+                    } else {
+                        // Height Mode: Detect Top Hand vs Side Hand
+                        const lY = results.leftHandLandmarks[0].y;
+                        const rY = results.rightHandLandmarks[0].y;
+                        
+                        let topHand, sideHand;
+                        if (lY < rY) {
+                            topHand = results.leftHandLandmarks; // Left is Top
+                            sideHand = results.rightHandLandmarks; // Right is Side
+                        } else {
+                            topHand = results.rightHandLandmarks; // Right is Top
+                            sideHand = results.leftHandLandmarks; // Left is Side
+                        }
+                        
+                        // Draw Middle Finger (12) on Top Hand
+                        const t = topHand[12]; 
+                        drawDot(canvasCtx, t.x*w, t.y*h, "#ef4444");
+                        
+                        // Draw Index Finger (8) on Side Hand
+                        const s = sideHand[8];
+                        drawDot(canvasCtx, s.x*w, s.y*h, "#ef4444");
+                    }
                     
                     alignmentStableFrames++;
                     if (alignmentStableFrames > 30) {
@@ -704,28 +729,38 @@
                     );
                     const mmPerPixel = userIPD / irisDistPx;
 
-                    const lWrist = results.leftHandLandmarks[0];
-                    const rWrist = results.rightHandLandmarks[0];
-                    const lIndex = results.leftHandLandmarks[8];
-                    const rIndex = results.rightHandLandmarks[8];
-
                     let resultMM = 0;
 
                     if (mode === 'breadth') {
+                        const lIndex = results.leftHandLandmarks[8];
+                        const rIndex = results.rightHandLandmarks[8];
                         const distPx = distEuclidean(
                             {x:lIndex.x*w, y:lIndex.y*h},
                             {x:rIndex.x*w, y:rIndex.y*h}
                         );
                         resultMM = distPx * mmPerPixel;
                     } else {
-                        let topY, sideY;
-                        if (lWrist.y < rWrist.y) {
-                            topY = lWrist.y * h;
-                            sideY = rIndex.y * h;
+                        // HEIGHT LOGIC (Updated for Middle Finger)
+                        const lY = results.leftHandLandmarks[0].y;
+                        const rY = results.rightHandLandmarks[0].y;
+
+                        let topPoint, sidePoint;
+
+                        // Identify Top vs Side Hand based on Wrist Height
+                        if (lY < rY) {
+                            // Left is Top -> Middle Finger (12)
+                            topPoint = results.leftHandLandmarks[12];
+                            // Right is Side -> Index Finger (8)
+                            sidePoint = results.rightHandLandmarks[8];
                         } else {
-                            topY = rWrist.y * h;
-                            sideY = lIndex.y * h;
+                            // Right is Top -> Middle Finger (12)
+                            topPoint = results.rightHandLandmarks[12];
+                            // Left is Side -> Index Finger (8)
+                            sidePoint = results.leftHandLandmarks[8];
                         }
+
+                        const topY = topPoint.y * h;
+                        const sideY = sidePoint.y * h;
                         resultMM = Math.abs(sideY - topY) * mmPerPixel;
                     }
 
